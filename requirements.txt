@@ -4,3 +4,4 @@ streamlit
 altair
 requests
 numpy
+altair>=5.0.0
