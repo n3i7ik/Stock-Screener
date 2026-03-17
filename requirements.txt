@@ -1,7 +1,6 @@
-yfinance
-pandas
-streamlit
-altair
-requests
-numpy
-altair>=5.0.0
+yfinance==0.2.54
+pandas==2.2.2
+numpy==1.26.4
+requests==2.32.3
+streamlit==1.45.0
+altair==5.3.0
