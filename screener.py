@@ -100,11 +100,31 @@ with col1:
     pe_enabled = st.toggle("PE Ratio Filter", value=True)
     if pe_enabled:
         pe_min, pe_max = st.slider("PE Range", 0, 150, (0, 50))
+    with st.expander("❓ What is PE Ratio?"):
+        st.markdown("""
+        **Price-to-Earnings (PE) Ratio** measures how much investors pay for ₹1 of a company's profit.
+        
+        - **PE < 15** → Potentially undervalued
+        - **PE 15–30** → Fairly valued for most sectors
+        - **PE > 50** → Expensive, high growth expected
+        
+        💡 Always compare PE within the same sector. A PE of 30 is cheap for IT but expensive for banking.
+        """)
 
 with col2:
     price_enabled = st.toggle("Price Filter (₹)", value=False)
     if price_enabled:
         price_min, price_max = st.slider("Price Range (₹)", 0, 50000, (0, 5000))
+    with st.expander("❓ What is Price Filter?"):
+        st.markdown("""
+        **Stock Price** is the current market price of one share.
+        
+        - Use this to filter stocks within your budget
+        - **Lower price ≠ cheaper stock** — always check PE too
+        - A ₹500 stock can be more expensive than a ₹5,000 stock if earnings are low
+        
+        💡 Price alone is meaningless. Use it alongside PE for better results.
+        """)
 
 col3, col4 = st.columns(2)
 
@@ -112,11 +132,31 @@ with col3:
     change_enabled = st.toggle("Day Change % Filter", value=False)
     if change_enabled:
         change_min, change_max = st.slider("Day Change %", -20, 20, (-5, 5))
+    with st.expander("❓ What is Day Change %?"):
+        st.markdown("""
+        **Day Change %** shows how much the stock price moved today compared to yesterday's close.
+        
+        - **Positive %** → Stock is up today
+        - **Negative %** → Stock is down today
+        - **Use case:** Find stocks that dipped today but are fundamentally strong
+        
+        💡 Set range to -5% to 0% to find stocks on a dip worth investigating.
+        """)
 
 with col4:
     week_range_enabled = st.toggle("Near 52-Week Low Filter", value=False)
     if week_range_enabled:
         st.caption("Shows stocks within 20% of their 52-week low")
+    with st.expander("❓ What is 52-Week Low Filter?"):
+        st.markdown("""
+        **52-Week Low** is the lowest price a stock has traded at in the past year.
+        
+        - Stocks near their 52-week low are at historically cheap prices
+        - This filter shows stocks **within 20% of their yearly bottom**
+        - Useful for finding beaten-down stocks that may recover
+        
+        ⚠️ A stock near its 52-week low isn't always a good buy — check PE and fundamentals too. Sometimes stocks are cheap for a reason.
+        """)
 
 st.markdown("---")
 
