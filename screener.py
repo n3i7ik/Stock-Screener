@@ -1,11 +1,18 @@
+That's a timeout issue. Render free tier kills requests that take too long — scanning 100 stocks one by one takes 2-3 minutes and Render cuts it off.
+
+Fix: reduce to 50 stocks and add a timeout per request so slow stocks don't hold up the whole scan.
+
+Replace your full `screener.py` with this:
+
+```python
 import streamlit as st
 import yfinance as yf
 import pandas as pd
 import time
 import random
 
-st.set_page_config(page_title="Indian Stock Screener", layout="wide")
-st.title("🇮🇳 Indian Stock Screener")
+st.set_page_config(page_title="Nexara Stock Screener", layout="wide")
+st.title("🇮🇳 Nexara Stock Screener")
 st.caption("Filter NSE stocks by key fundamental metrics")
 
 col1, col2, col3 = st.columns(3)
@@ -26,17 +33,7 @@ tickers = [
     "TATAMOTORS.NS", "TATASTEEL.NS", "JSWSTEEL.NS", "HINDALCO.NS", "VEDL.NS",
     "BAJAJFINSV.NS", "HDFCLIFE.NS", "SBILIFE.NS", "ICICIPRULI.NS", "ICICIGI.NS",
     "BRITANNIA.NS", "MARICO.NS", "COLPAL.NS", "GODREJCP.NS", "EMAMILTD.NS",
-    "HAVELLS.NS", "VOLTAS.NS", "WHIRLPOOL.NS", "BLUESTARCO.NS", "SYMPHONY.NS",
-    "BERGEPAINT.NS", "KANSAINER.NS", "AKZONOBEL.NS", "SHEELA.NS", "RELAXO.NS",
-    "PAGEIND.NS", "RAYMOND.NS", "MUTHOOTFIN.NS", "CHOLAFIN.NS", "MANAPPURAM.NS",
-    "LICHSGFIN.NS", "PNBHOUSING.NS", "AAVAS.NS", "HOMEFIRST.NS", "APTUS.NS",
-    "ALKYLAMINE.NS", "ATUL.NS", "DEEPAKNI.NS", "FINEORG.NS", "GALAXYSURF.NS",
-    "ABBOTINDIA.NS", "ASTRAZEN.NS", "PFIZER.NS", "SANOFI.NS", "GLAXO.NS",
-    "ZOMATO.NS", "NYKAA.NS", "POLICYBZR.NS", "PAYTM.NS", "DELHIVERY.NS",
-    "IRCTC.NS", "RAILVIKAS.NS", "RVNL.NS", "IRFC.NS", "HUDCO.NS",
-    "TATAPOWER.NS", "ADANIGREEN.NS", "ADANITRANS.NS", "TORNTPOWER.NS", "CESC.NS",
-    "ZYDUSLIFE.NS", "LUPIN.NS", "AUROPHARMA.NS", "GLENMARK.NS", "IPCALAB.NS",
-    "MCDOWELL-N.NS", "RADICO.NS", "UNITDSPR.NS", "UBL.NS", "GLOBUSSPR.NS"
+    "HAVELLS.NS", "VOLTAS.NS", "IRCTC.NS", "ZYDUSLIFE.NS", "LUPIN.NS"
 ]
 
 scan_messages = [
@@ -62,7 +59,6 @@ fun_facts = [
     "💡 Promoter holding above 50% usually signals founder confidence.",
     "💡 Free Cash Flow is more reliable than reported profit.",
     "💡 The Nifty 50 has delivered ~12% CAGR over the last 20 years.",
-    "💡 Benjamin Graham's book 'The Intelligent Investor' was published in 1949.",
     "💡 Index funds beat 90% of actively managed funds over 10 years.",
     "💡 A company with high margins and low debt is a rare combination.",
     "💡 Screener.in was built by one person and now has millions of users.",
