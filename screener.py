@@ -57,6 +57,13 @@ fun_facts = [
     "💡 Screener.in was built by one person and now has millions of users.",
 ]
 
+if st.button("🔧 Debug Single Stock"):
+    info = yf.Ticker("MARUTI.NS").info
+    st.write("PE:", info.get('trailingPE'))
+    st.write("D/E:", info.get('debtToEquity'))
+    st.write("Growth:", info.get('revenueGrowth'))
+    st.write("Raw keys count:", len(info.keys()))
+
 if st.button("🔍 Run Screener"):
     total = len(tickers)
     results = []
