@@ -1,10 +1,3 @@
-That's a timeout issue. Render free tier kills requests that take too long — scanning 100 stocks one by one takes 2-3 minutes and Render cuts it off.
-
-Fix: reduce to 50 stocks and add a timeout per request so slow stocks don't hold up the whole scan.
-
-Replace your full `screener.py` with this:
-
-```python
 import streamlit as st
 import yfinance as yf
 import pandas as pd
