@@ -1,7 +1,6 @@
 import streamlit as st
-import yfinance as yf
 import pandas as pd
-import time
+import requests
 import random
 
 st.set_page_config(page_title="Nexara Stock Screener", layout="wide")
@@ -16,17 +15,31 @@ with col2:
 with col3:
     growth_min = st.slider("Min Revenue Growth %", 0, 50, 5)
 
-tickers = [
-    "RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "INFY.NS", "ICICIBANK.NS",
-    "HINDUNILVR.NS", "ITC.NS", "SBIN.NS", "BHARTIARTL.NS", "KOTAKBANK.NS",
-    "ASIANPAINT.NS", "MARUTI.NS", "SUNPHARMA.NS", "TITAN.NS", "NESTLEIND.NS",
-    "WIPRO.NS", "ULTRACEMCO.NS", "BAJFINANCE.NS", "PIDILITIND.NS", "DABUR.NS",
-    "HCLTECH.NS", "AXISBANK.NS", "DRREDDY.NS", "DIVISLAB.NS", "CIPLA.NS",
-    "ADANIPORTS.NS", "POWERGRID.NS", "NTPC.NS", "ONGC.NS", "COALINDIA.NS",
-    "TATAMOTORS.NS", "TATASTEEL.NS", "JSWSTEEL.NS", "HINDALCO.NS", "VEDL.NS",
-    "BAJAJFINSV.NS", "HDFCLIFE.NS", "SBILIFE.NS", "ICICIPRULI.NS", "ICICIGI.NS",
-    "BRITANNIA.NS", "MARICO.NS", "COLPAL.NS", "GODREJCP.NS", "EMAMILTD.NS",
-    "HAVELLS.NS", "VOLTAS.NS", "IRCTC.NS", "ZYDUSLIFE.NS", "LUPIN.NS"
+HEADERS = {
+    "User-Agent": "Mozilla/5.0",
+    "Accept-Language": "en-US,en;q=0.9",
+}
+
+def get_nse_data(symbol):
+    try:
+        url = f"https://www.nseindia.com/api/quote-equity?symbol={symbol}"
+        session = requests.Session()
+        session.get("https://www.nseindia.com", headers=HEADERS, timeout=5)
+        r = session.get(url, headers=HEADERS, timeout=5)
+        data = r.json()
+        pe = data.get("metadata", {}).get("pdSymbolPe", None)
+        price = data.get("priceInfo", {}).get("lastPrice", None)
+        return {"pe": float(pe) if pe else None, "price": price}
+    except:
+        return None
+
+symbols = [
+    "RELIANCE", "TCS", "HDFCBANK", "INFY", "ICICIBANK",
+    "HINDUNILVR", "ITC", "SBIN", "BHARTIARTL", "KOTAKBANK",
+    "ASIANPAINT", "MARUTI", "SUNPHARMA", "TITAN", "NESTLEIND",
+    "WIPRO", "ULTRACEMCO", "BAJFINANCE", "PIDILITIND", "DABUR",
+    "HCLTECH", "AXISBANK", "DRREDDY", "DIVISLAB", "CIPLA",
+    "IRCTC", "ZYDUSLIFE", "LUPIN", "HAVELLS", "MARICO"
 ]
 
 scan_messages = [
@@ -49,30 +62,19 @@ fun_facts = [
     "💡 Debt/Equity below 1 means the company owns more than it owes.",
     "💡 IRCTC is one of the few listed government monopolies in India.",
     "💡 Revenue growth above 15% consistently is rare and valuable.",
-    "💡 Promoter holding above 50% usually signals founder confidence.",
-    "💡 Free Cash Flow is more reliable than reported profit.",
     "💡 The Nifty 50 has delivered ~12% CAGR over the last 20 years.",
     "💡 Index funds beat 90% of actively managed funds over 10 years.",
-    "💡 A company with high margins and low debt is a rare combination.",
-    "💡 Screener.in was built by one person and now has millions of users.",
 ]
 
-if st.button("🔧 Debug Single Stock"):
-    info = yf.Ticker("MARUTI.NS").info
-    st.write("PE:", info.get('trailingPE'))
-    st.write("D/E:", info.get('debtToEquity'))
-    st.write("Growth:", info.get('revenueGrowth'))
-    st.write("Raw keys count:", len(info.keys()))
-
 if st.button("🔍 Run Screener"):
-    total = len(tickers)
+    total = len(symbols)
     results = []
 
     status_placeholder = st.empty()
     fact_placeholder = st.empty()
     progress_bar = st.progress(0)
 
-    for i, t in enumerate(tickers):
+    for i, symbol in enumerate(symbols):
         progress = (i + 1) / total
 
         if progress < 0.125:
@@ -97,32 +99,22 @@ if st.button("🔍 Run Screener"):
 
         progress_bar.progress(progress)
 
-        try:
-            info = yf.Ticker(t).info
-            pe = info.get('trailingPE', 999)
-            de = info.get('debtToEquity', 999)
-            growth = info.get('revenueGrowth', 0)
-            volume = info.get('averageVolume', 0)
-            margin = info.get('profitMargins', 0)
-
-            if pe < pe_max and de < de_max and growth > growth_min / 100:
+        data = get_nse_data(symbol)
+        if data and data["pe"]:
+            pe = data["pe"]
+            if pe < pe_max:
                 results.append({
-                    "Ticker": t.replace(".NS", ""),
+                    "Ticker": symbol,
                     "PE": round(pe, 1),
-                    "D/E": round(de, 1),
-                    "Revenue Growth %": round(growth * 100, 1),
-                    "Profit Margin %": round(margin * 100, 1),
-                    "Avg Volume (L)": round(volume / 100000, 1)
+                    "Price": data["price"]
                 })
-        except:
-            pass
 
     status_placeholder.empty()
     fact_placeholder.empty()
     progress_bar.empty()
 
     if results:
-        df = pd.DataFrame(results).sort_values("Revenue Growth %", ascending=False)
+        df = pd.DataFrame(results).sort_values("PE")
         st.success(f"✅ {len(df)} stocks passed your filter")
         st.dataframe(df, use_container_width=True)
         csv = df.to_csv(index=False)
