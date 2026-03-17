@@ -10,11 +10,11 @@ st.caption("Filter NSE stocks by key fundamental metrics")
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    pe_max = st.slider("Max PE Ratio", 10, 100, 30)
+    pe_max = st.slider("Max PE Ratio", 10, 100, 50)
 with col2:
-    de_max = st.slider("Max Debt/Equity", 0, 100, 40)
+    de_max = st.slider("Max Debt/Equity", 0, 100, 60)
 with col3:
-    growth_min = st.slider("Min Revenue Growth %", 0, 50, 10)
+    growth_min = st.slider("Min Revenue Growth %", 0, 50, 5)
 
 tickers = [
     "RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "INFY.NS", "ICICIBANK.NS",
