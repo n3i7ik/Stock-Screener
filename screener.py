@@ -3,9 +3,9 @@ import pandas as pd
 import requests
 import random
 
-st.set_page_config(page_title="Nexara Stock Screener", layout="wide")
+st.set_page_config(page_title="Akcelara Stock Screener", layout="wide")
 st.image("logo.jpg", width=250)
-st.title("🇮🇳 Nexara Stock Screener")
+st.title("🇮🇳 Akcelara Stock Screener")
 st.caption("Filter NSE stocks by key fundamental metrics")
 
 HEADERS = {
